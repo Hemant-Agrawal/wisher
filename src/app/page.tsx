@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
-import { Upload, Sparkles, Heart, User, Phone } from 'lucide-react'
+import { supabase, getPublicUrl } from '@/lib/supabase'
+import { Upload, Sparkles, Heart, User, Phone, X } from 'lucide-react'
 
 const messages = [
   {
@@ -172,11 +172,27 @@ export default function Home() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'sender' | 'custom') => {
     const file = e.target.files?.[0]
     if (file) {
+      // Validate file size (10MB limit)
+      if (file.size > 10 * 1024 * 1024) {
+        alert('File size must be less than 10MB')
+        return
+      }
+      
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        alert('Please select a valid image file')
+        return
+      }
+      
       setFormData(prev => ({ 
         ...prev, 
         [type === 'sender' ? 'senderImage' : 'customImage']: file 
       }))
     }
+  }
+
+  const clearCustomImage = () => {
+    setFormData(prev => ({ ...prev, customImage: null }))
   }
 
   const nextStep = () => {
@@ -197,21 +213,29 @@ export default function Home() {
   }
 
   const uploadImage = async (file: File) => {
-    const fileExt = file.name.split('.').pop()
-    const fileName = `${Math.random()}.${fileExt}`
-    const filePath = `wish-images/${fileName}`
+    try {
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${Math.random()}.${fileExt}`
+      const filePath = `wish-images/${fileName}`
 
-    const { error: uploadError } = await supabase.storage
-      .from('wish-images')
-      .upload(filePath, file)
+      console.log('Uploading file:', filePath, 'Size:', file.size)
 
-    if (uploadError) throw uploadError
+      const { error: uploadError } = await supabase.storage
+        .from('wish-images')
+        .upload(filePath, file)
 
-    const { data } = supabase.storage
-      .from('wish-images')
-      .getPublicUrl(filePath)
+      if (uploadError) {
+        console.error('Upload error:', uploadError)
+        throw uploadError
+      }
 
-    return data.publicUrl
+      const publicUrl = getPublicUrl(filePath)
+      console.log('Generated public URL:', publicUrl)
+      return publicUrl
+    } catch (error) {
+      console.error('Image upload failed:', error)
+      throw error
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -402,6 +426,67 @@ export default function Home() {
                   </div>
                 )}
 
+                {/* Quick Custom Image Upload in Step 1 */}
+                <div className="mt-8 animate-fade-in-up">
+                  <div className="card p-6">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                      <Upload className="w-5 h-5 mr-2 text-amber-600" />
+                      Add Custom Image (Optional)
+                    </h3>
+                    <p className="text-gray-600 mb-4 text-sm">
+                      Upload a custom image that will be displayed in your Diwali wish
+                    </p>
+                    
+                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-amber-400 hover:bg-amber-50 transition-all duration-300 cursor-pointer">
+                      <input
+                        type="file"
+                        id="quickCustomImage"
+                        name="quickCustomImage"
+                        onChange={(e) => handleImageChange(e, 'custom')}
+                        accept="image/*"
+                        className="hidden"
+                      />
+                      <label htmlFor="quickCustomImage" className="cursor-pointer">
+                        <Upload className="w-8 h-8 text-amber-500 mx-auto mb-3" />
+                        <p className="text-sm font-medium text-gray-700">
+                          {formData.customImage ? formData.customImage.name : 'Click to upload custom image'}
+                        </p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          PNG, JPG, GIF up to 10MB
+                        </p>
+                      </label>
+                    </div>
+                    
+                    {formData.customImage && (
+                      <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center">
+                            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                              <img
+                                src={URL.createObjectURL(formData.customImage)}
+                                alt="Preview"
+                                className="w-10 h-10 object-cover rounded-lg"
+                              />
+                            </div>
+                            <div>
+                              <p className="text-xs font-medium text-green-800">Image ready</p>
+                              <p className="text-xs text-green-600">{formData.customImage.name}</p>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={clearCustomImage}
+                            className="p-1 text-red-500 hover:text-red-700 hover:bg-red-100 rounded-full transition-colors"
+                            title="Remove image"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
                 <div className="flex justify-end mt-8">
                   <button
                     type="button"
@@ -584,6 +669,65 @@ export default function Home() {
                     </div>
                   </div>
                 )}
+
+                {/* Custom Image Upload - Available for all users */}
+                <div className="card p-6 animate-fade-in-up">
+                  <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                    <Upload className="w-6 h-6 mr-3 text-amber-600" />
+                    Add Custom Image to Your Wish
+                  </h3>
+                  <p className="text-gray-600 mb-4">
+                    Upload a custom image that will be displayed in your Diwali wish (optional)
+                  </p>
+                  
+                  <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-amber-400 hover:bg-amber-50 transition-all duration-300 cursor-pointer">
+                    <input
+                      type="file"
+                      id="customImage"
+                      name="customImage"
+                      onChange={(e) => handleImageChange(e, 'custom')}
+                      accept="image/*"
+                      className="hidden"
+                    />
+                    <label htmlFor="customImage" className="cursor-pointer">
+                      <Upload className="w-12 h-12 text-amber-500 mx-auto mb-4" />
+                      <p className="text-lg font-medium text-gray-700">
+                        {formData.customImage ? formData.customImage.name : 'Click to upload custom image'}
+                      </p>
+                      <p className="text-sm text-gray-500 mt-2">
+                        PNG, JPG, GIF up to 10MB
+                      </p>
+                    </label>
+                  </div>
+                  
+                  {formData.customImage && (
+                    <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center">
+                          <div className="w-16 h-16 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                            <img
+                              src={URL.createObjectURL(formData.customImage)}
+                              alt="Preview"
+                              className="w-14 h-14 object-cover rounded-lg"
+                            />
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-green-800">Image ready for upload</p>
+                            <p className="text-xs text-green-600">{formData.customImage.name}</p>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={clearCustomImage}
+                          className="p-2 text-red-500 hover:text-red-700 hover:bg-red-100 rounded-full transition-colors"
+                          title="Remove image"
+                        >
+                          <X className="w-5 h-5" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
 
                 <div className="flex flex-col sm:flex-row justify-between gap-4 mt-8">
                   <button

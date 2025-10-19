@@ -451,13 +451,6 @@ export default function WishPage() {
             </div>
           )}
 
-          {/* Message */}
-          <div className={`card-glass p-10 mb-10 shadow-glow animate-fade-in-up`}>
-            <p className={`text-lg sm:text-xl md:text-2xl lg:text-3xl leading-relaxed font-medium ${config.cardText}`}>
-              {wish.message}
-            </p>
-          </div>
-
           {/* Custom Image */}
           {wish.image_url && (
             <div className="mb-10 animate-fade-in-scale">
@@ -466,11 +459,25 @@ export default function WishPage() {
                   src={wish.image_url}
                   alt="Diwali wish"
                   className="max-w-lg mx-auto rounded-3xl shadow-2xl hover-lift transition-all duration-500"
+                  onError={(e) => {
+                    console.error('Image failed to load:', wish.image_url)
+                    e.currentTarget.style.display = 'none'
+                  }}
+                  onLoad={() => {
+                    console.log('Image loaded successfully:', wish.image_url)
+                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-3xl"></div>
               </div>
             </div>
           )}
+          {/* Message */}
+          <div className={`card-glass p-10 mb-10 shadow-glow animate-fade-in-up`}>
+            <p className={`text-lg sm:text-xl md:text-2xl lg:text-3xl leading-relaxed font-medium ${config.cardText}`}>
+              {wish.message}
+            </p>
+          </div>
+
 
           {/* Sender Signature */}
           {wish.sender_name && (
@@ -482,6 +489,13 @@ export default function WishPage() {
                       src={wish.sender_image_url}
                       alt="Sender"
                       className="w-20 h-20 rounded-full object-cover border-4 border-white/50 shadow-lg hover-lift transition-all duration-300"
+                      onError={(e) => {
+                        console.error('Sender image failed to load:', wish.sender_image_url)
+                        e.currentTarget.style.display = 'none'
+                      }}
+                      onLoad={() => {
+                        console.log('Sender image loaded successfully:', wish.sender_image_url)
+                      }}
                     />
                     <div className="absolute inset-0 w-20 h-20 bg-gradient-to-br from-amber-400/20 to-orange-400/20 rounded-full blur-sm"></div>
                   </div>
