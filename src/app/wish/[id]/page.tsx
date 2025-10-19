@@ -293,72 +293,213 @@ export default function WishPage() {
     const message = wish?.message || "";
     const text = `🪔 *${headline}* 🪔\n\n${message}\n\n✨ Check out my Diwali Wish: ${url} ✨`;
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
-    window.open(whatsappUrl, "_blank");
+    
+    // Try to open in new tab, fallback to current window
+    try {
+      const newWindow = window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+      if (!newWindow) {
+        // Popup blocked, fallback to current window
+        window.location.href = whatsappUrl;
+      }
+    } catch (error) {
+      console.error("Error opening WhatsApp:", error);
+      // Final fallback
+      window.location.href = whatsappUrl;
+    }
   };
 
   const downloadAsImage = async () => {
-    if (!wishRef.current) return;
+    if (!wishRef.current) {
+      console.error("Wish reference not found");
+      alert("Unable to generate image. Please refresh the page and try again.");
+      return;
+    }
 
     try {
+      console.log("Starting image generation...");
+      
+      // Wait a bit for any animations to complete
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
       const canvas = await html2canvas(wishRef.current, {
         backgroundColor: null,
         scale: 2,
         useCORS: true,
         allowTaint: true,
         foreignObjectRendering: true,
+        logging: false,
+        width: wishRef.current.scrollWidth,
+        height: wishRef.current.scrollHeight,
+        scrollX: 0,
+        scrollY: 0,
+        windowWidth: wishRef.current.scrollWidth,
+        windowHeight: wishRef.current.scrollHeight,
       });
 
+      console.log("Canvas generated, creating download link...");
+      
+      const dataUrl = canvas.toDataURL("image/png", 1.0);
+      
+      // Create download link
       const link = document.createElement("a");
-      link.download = `diwali-wish-${wish?.name}.png`;
-      link.href = canvas.toDataURL("image/png", 1.0);
+      link.download = `diwali-wish-${wish?.name || 'wish'}.png`;
+      link.href = dataUrl;
+      
+      // Append to body, click, then remove
+      document.body.appendChild(link);
       link.click();
+      document.body.removeChild(link);
+      
+      console.log("Download initiated successfully");
+      
     } catch (error) {
       console.error("Error downloading image:", error);
-      alert("Failed to download image. Please try again.");
+      
+      // Try with simpler options as fallback
+      try {
+        console.log("Trying fallback download method...");
+        const canvas = await html2canvas(wishRef.current, {
+          backgroundColor: '#ffffff',
+          scale: 1,
+          useCORS: false,
+          allowTaint: true,
+        });
+        
+        const link = document.createElement("a");
+        link.download = `diwali-wish-${wish?.name || 'wish'}.png`;
+        link.href = canvas.toDataURL("image/png", 0.9);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        console.log("Fallback download successful");
+      } catch (fallbackError) {
+        console.error("Fallback download also failed:", fallbackError);
+        alert("Failed to download image. Please try refreshing the page and try again.");
+      }
     }
   };
 
   const shareImage = async () => {
-    if (!wishRef.current) return;
+    if (!wishRef.current) {
+      console.error("Wish reference not found");
+      alert("Unable to generate image for sharing. Please refresh the page and try again.");
+      return;
+    }
 
     try {
+      console.log("Starting image generation for sharing...");
+      
+      // Wait a bit for any animations to complete
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
       const canvas = await html2canvas(wishRef.current, {
         backgroundColor: null,
         scale: 2,
         useCORS: true,
         allowTaint: true,
         foreignObjectRendering: true,
+        logging: false,
+        width: wishRef.current.scrollWidth,
+        height: wishRef.current.scrollHeight,
+        scrollX: 0,
+        scrollY: 0,
+        windowWidth: wishRef.current.scrollWidth,
+        windowHeight: wishRef.current.scrollHeight,
       });
 
+      console.log("Canvas generated for sharing, creating file...");
+      
       const dataUrl = canvas.toDataURL("image/png", 1.0);
+      const blob = await fetch(dataUrl).then((r) => r.blob());
+      const file = new File([blob], `diwali-wish-${wish?.name || 'wish'}.png`, {
+        type: "image/png",
+      });
 
+      console.log("File created, attempting native share...");
+
+      // Try native Web Share API first
       if (navigator.share && navigator.canShare) {
-        const blob = await fetch(dataUrl).then((r) => r.blob());
-        const file = new File([blob], `diwali-wish-${wish?.name}.png`, {
-          type: "image/png",
-        });
-
-        if (navigator.canShare({ files: [file] })) {
-          await navigator.share({
-            title: `Diwali Wish for ${wish?.name}`,
-            text: `Check out this beautiful Diwali wish! 🪔✨`,
-            files: [file],
-          });
-        } else {
-          // Fallback to WhatsApp sharing
-          const text = `🪔 *${wish?.headline}* 🪔\n\n${wish?.message}\n\n✨ Check out my Diwali Wish: ${window.location.href} ✨`;
-          const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
-          window.open(whatsappUrl, "_blank");
+        try {
+          if (navigator.canShare({ files: [file] })) {
+            console.log("Attempting native share with file...");
+            await navigator.share({
+              title: `Diwali Wish for ${wish?.name || 'Someone'}`,
+              text: `Check out this beautiful Diwali wish! 🪔✨`,
+              files: [file],
+            });
+            console.log("Native share with file successful!");
+            return; // Success, exit function
+          } else {
+            console.log("Native share doesn't support files, trying text-only...");
+          }
+        } catch (shareError) {
+          console.log('Native share with file failed, trying text-only:', shareError);
         }
-      } else {
-        // Fallback to WhatsApp sharing
-        const text = `🪔 *${wish?.headline}* 🪔\n\n${wish?.message}\n\n✨ Check out my Diwali Wish: ${window.location.href} ✨`;
+      }
+
+      // Fallback 1: Try to share with text only (for devices that don't support file sharing)
+      if (navigator.share) {
+        try {
+          console.log("Attempting text-only native share...");
+          await navigator.share({
+            title: `Diwali Wish for ${wish?.name || 'Someone'}`,
+            text: `Check out this beautiful Diwali wish! 🪔✨\n\nView: ${window.location.href}`,
+          });
+          console.log("Text-only native share successful!");
+          return; // Success, exit function
+        } catch (textShareError) {
+          console.log('Text-only native share failed, trying download fallback:', textShareError);
+        }
+      }
+
+      // Fallback 2: Download the image and show instructions
+      console.log("Native share not available, downloading image...");
+      const link = document.createElement("a");
+      link.download = `diwali-wish-${wish?.name || 'wish'}.png`;
+      link.href = dataUrl;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Show instructions for manual sharing
+      setTimeout(() => {
+        alert(`Image downloaded! You can now share it manually from your downloads folder.\n\nOr share the link: ${window.location.href}`);
+      }, 1000);
+
+    } catch (error) {
+      console.error("Error sharing image:", error);
+      
+      // Try fallback download method
+      try {
+        console.log("Trying fallback share method...");
+        const canvas = await html2canvas(wishRef.current, {
+          backgroundColor: '#ffffff',
+          scale: 1,
+          useCORS: false,
+          allowTaint: true,
+        });
+        
+        const dataUrl = canvas.toDataURL("image/png", 0.9);
+        const link = document.createElement("a");
+        link.download = `diwali-wish-${wish?.name || 'wish'}.png`;
+        link.href = dataUrl;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        setTimeout(() => {
+          alert(`Image downloaded! You can now share it manually from your downloads folder.\n\nOr share the link: ${window.location.href}`);
+        }, 1000);
+        
+      } catch (fallbackError) {
+        console.error("Fallback share also failed:", fallbackError);
+        
+        // Final fallback: WhatsApp text sharing
+        const text = `🪔 *${wish?.headline || 'Happy Diwali'}* 🪔\n\n${wish?.message || 'Wishing you a very Happy Diwali!'}\n\n✨ Check out my Diwali Wish: ${window.location.href} ✨`;
         const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
         window.open(whatsappUrl, "_blank");
       }
-    } catch (error) {
-      console.error("Error sharing image:", error);
-      alert("Failed to share image. Please try again.");
     }
   };
 
@@ -391,9 +532,25 @@ export default function WishPage() {
 
   const config = themeConfigs[wish.theme as keyof typeof themeConfigs];
 
+  // Get theme background style
+  const getThemeBackground = (theme: string) => {
+    const backgrounds = {
+      'gold-glow': 'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%)',
+      'royal-purple': 'linear-gradient(135deg, #4A148C 0%, #7B1FA2 50%, #B388EB 100%)',
+      'festive-orange': 'linear-gradient(135deg, #FF7043 0%, #FF5722 50%, #E64A19 100%)',
+      'midnight-sky': 'linear-gradient(135deg, #0D1421 0%, #1A1A2E 50%, #16213E 100%)',
+      'rose-gold': 'linear-gradient(135deg, #F43F5E 0%, #EC4899 50%, #F59E0B 100%)',
+      'emerald-green': 'linear-gradient(135deg, #10B981 0%, #059669 50%, #0D9488 100%)'
+    }
+    return backgrounds[theme as keyof typeof backgrounds] || backgrounds['gold-glow']
+  }
+
   return (
     <div
       className={`min-h-screen ${config.background} relative overflow-hidden`}
+      style={{
+        background: getThemeBackground(wish.theme)
+      }}
     >
       {/* Fireworks Container */}
       <div

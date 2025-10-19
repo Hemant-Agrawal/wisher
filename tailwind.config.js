@@ -5,6 +5,22 @@ module.exports = {
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  safelist: [
+    'gold-glow',
+    'royal-purple', 
+    'festive-orange',
+    'midnight-sky',
+    'rose-gold',
+    'emerald-green',
+    'diya-flicker',
+    'star-twinkle',
+    'firework',
+    'animate-float-gentle',
+    'animate-pulse-glow',
+    'animate-fade-in-up',
+    'animate-fade-in-scale',
+    'animate-slide-in-right'
+  ],
   theme: {
     extend: {
       colors: {
