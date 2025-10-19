@@ -458,7 +458,7 @@ export default function WishPage() {
                 <img
                   src={wish.image_url}
                   alt="Diwali wish"
-                  className="max-w-lg mx-auto rounded-3xl shadow-2xl hover-lift transition-all duration-500"
+                  className="max-w-lg w-[90vw] mx-auto rounded-3xl shadow-2xl hover-lift transition-all duration-500"
                   onError={(e) => {
                     console.error('Image failed to load:', wish.image_url)
                     e.currentTarget.style.display = 'none'
