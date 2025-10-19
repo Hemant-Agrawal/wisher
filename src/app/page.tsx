@@ -426,67 +426,6 @@ export default function Home() {
                   </div>
                 )}
 
-                {/* Quick Custom Image Upload in Step 1 */}
-                <div className="mt-8 animate-fade-in-up">
-                  <div className="card p-6">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                      <Upload className="w-5 h-5 mr-2 text-amber-600" />
-                      Add Custom Image (Optional)
-                    </h3>
-                    <p className="text-gray-600 mb-4 text-sm">
-                      Upload a custom image that will be displayed in your Diwali wish
-                    </p>
-                    
-                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-amber-400 hover:bg-amber-50 transition-all duration-300 cursor-pointer">
-                      <input
-                        type="file"
-                        id="quickCustomImage"
-                        name="quickCustomImage"
-                        onChange={(e) => handleImageChange(e, 'custom')}
-                        accept="image/*"
-                        className="hidden"
-                      />
-                      <label htmlFor="quickCustomImage" className="cursor-pointer">
-                        <Upload className="w-8 h-8 text-amber-500 mx-auto mb-3" />
-                        <p className="text-sm font-medium text-gray-700">
-                          {formData.customImage ? formData.customImage.name : 'Click to upload custom image'}
-                        </p>
-                        <p className="text-xs text-gray-500 mt-1">
-                          PNG, JPG, GIF up to 10MB
-                        </p>
-                      </label>
-                    </div>
-                    
-                    {formData.customImage && (
-                      <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center">
-                            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-3">
-                              <img
-                                src={URL.createObjectURL(formData.customImage)}
-                                alt="Preview"
-                                className="w-10 h-10 object-cover rounded-lg"
-                              />
-                            </div>
-                            <div>
-                              <p className="text-xs font-medium text-green-800">Image ready</p>
-                              <p className="text-xs text-green-600">{formData.customImage.name}</p>
-                            </div>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={clearCustomImage}
-                            className="p-1 text-red-500 hover:text-red-700 hover:bg-red-100 rounded-full transition-colors"
-                            title="Remove image"
-                          >
-                            <X className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
                 <div className="flex justify-end mt-8">
                   <button
                     type="button"
