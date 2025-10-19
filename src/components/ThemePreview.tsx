@@ -53,25 +53,28 @@ export default function ThemePreview({ theme, isSelected, onClick }: ThemePrevie
 
   return (
     <div
-      className={`relative cursor-pointer rounded-lg p-4 border-2 transition-all ${
+      className={`relative cursor-pointer card hover-lift transition-all duration-300 ${
         isSelected
-          ? 'border-yellow-500 ring-2 ring-yellow-200'
-          : 'border-gray-200 hover:border-gray-300'
+          ? 'ring-4 ring-amber-200 shadow-glow bg-gradient-to-br from-amber-50 to-orange-50'
+          : 'hover:shadow-xl'
       }`}
       onClick={onClick}
     >
-      <div className={`w-full h-20 rounded-lg mb-3 bg-gradient-to-br ${config.gradient} flex items-center justify-center`}>
-        {config.icon}
-      </div>
-      <h3 className="font-medium text-gray-800">{config.name}</h3>
-      <p className="text-sm text-gray-600">{config.description}</p>
-      {isSelected && (
-        <div className="absolute top-2 right-2">
-          <div className="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center">
-            <span className="text-white text-sm">✓</span>
-          </div>
+      <div className="p-6">
+        <div className={`w-full h-24 rounded-2xl mb-4 bg-gradient-to-br ${config.gradient} flex items-center justify-center shadow-lg relative overflow-hidden`}>
+          {config.icon}
+          <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"></div>
         </div>
-      )}
+        <h3 className="text-lg font-bold text-gray-800 mb-2">{config.name}</h3>
+        <p className="text-sm text-gray-600 leading-relaxed">{config.description}</p>
+        {isSelected && (
+          <div className="absolute -top-2 -right-2">
+            <div className="w-8 h-8 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full flex items-center justify-center shadow-lg animate-pulse-glow">
+              <span className="text-white text-sm font-bold">✓</span>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   )
 }

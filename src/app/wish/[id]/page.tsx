@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { useParams } from 'next/navigation'
 import { supabase, Wish } from '@/lib/supabase'
-import { Share2, Download, MessageCircle, Sparkles, Star, Flame, User, Phone } from 'lucide-react'
+import { Share2, Download, MessageCircle, Sparkles, Star, Flame, User, Phone, Heart } from 'lucide-react'
 import { Fireworks } from 'fireworks-js'
 import html2canvas from 'html2canvas'
 
@@ -358,20 +358,23 @@ export default function WishPage() {
       {/* Fireworks Container */}
       <div id="fireworks-container" className="absolute inset-0 pointer-events-none"></div>
       
-      {/* Background Animations */}
+      {/* Enhanced Background Animations */}
       {wish.theme === 'gold-glow' && (
         <div className="absolute inset-0 pointer-events-none">
-          {[...Array(6)].map((_, i) => (
+          {[...Array(8)].map((_, i) => (
             <div
               key={i}
-              className="absolute diya-flicker"
+              className="absolute diya-flicker animate-float-gentle"
               style={{
-                left: `${20 + i * 15}%`,
-                top: `${30 + (i % 2) * 40}%`,
-                animationDelay: `${i * 0.5}s`
+                left: `${15 + i * 12}%`,
+                top: `${25 + (i % 3) * 25}%`,
+                animationDelay: `${i * 0.3}s`
               }}
             >
-              <Flame className="w-8 h-8 text-yellow-400" />
+              <div className="relative">
+                <Flame className="w-10 h-10 text-yellow-400 drop-shadow-lg" />
+                <div className="absolute inset-0 w-10 h-10 bg-yellow-400/20 rounded-full blur-md animate-pulse"></div>
+              </div>
             </div>
           ))}
         </div>
@@ -379,17 +382,36 @@ export default function WishPage() {
 
       {wish.theme === 'midnight-sky' && (
         <div className="absolute inset-0 pointer-events-none">
-          {[...Array(20)].map((_, i) => (
+          {[...Array(30)].map((_, i) => (
             <div
               key={i}
-              className="absolute star-twinkle"
+              className="absolute star-twinkle animate-float-gentle"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 3}s`
+              }}
+            >
+              <Star className="w-3 h-3 text-white drop-shadow-lg" />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Additional theme-specific decorations */}
+      {wish.theme === 'royal-purple' && (
+        <div className="absolute inset-0 pointer-events-none">
+          {[...Array(15)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute animate-float-gentle"
               style={{
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
                 animationDelay: `${Math.random() * 2}s`
               }}
             >
-              <Star className="w-2 h-2 text-white" />
+              <Sparkles className="w-4 h-4 text-purple-300 drop-shadow-lg" />
             </div>
           ))}
         </div>
@@ -397,67 +419,80 @@ export default function WishPage() {
 
       {/* Main Content */}
       <div ref={wishRef} className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 py-12">
-        <div className="text-center max-w-4xl mx-auto">
+        <div className="text-center max-w-5xl mx-auto">
           {/* Greeting */}
-          <div className="mb-8">
-            <h1 className={`text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold ${config.textColor} mb-4`}>
-              Happy Diwali
-            </h1>
+          <div className="mb-12 animate-fade-in-up">
+            <div className="relative mb-8">
+              <h1 className={`text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-display font-bold ${config.textColor} mb-6 text-gradient`}>
+                Happy Diwali
+              </h1>
+              <div className="absolute -top-4 -left-4 w-8 h-8 bg-yellow-400/30 rounded-full blur-sm animate-pulse"></div>
+              <div className="absolute -bottom-2 -right-4 w-6 h-6 bg-orange-400/30 rounded-full blur-sm animate-pulse" style={{animationDelay: '0.5s'}}></div>
+            </div>
             {wish.name && (
-              <h2 className={`text-xl sm:text-2xl md:text-3xl lg:text-5xl font-semibold ${config.accentColor} mb-2`}>
+              <h2 className={`text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-display font-semibold ${config.accentColor} mb-6 animate-fade-in-scale`}>
                 {wish.name} ✨
               </h2>
             )}
-            <div className="flex justify-center items-center">
-              <Sparkles className="w-8 h-8 text-yellow-400 animate-pulse" />
+            <div className="flex justify-center items-center animate-pulse">
+              <div className="relative">
+                <Sparkles className="w-12 h-12 text-yellow-400 drop-shadow-lg" />
+                <div className="absolute inset-0 w-12 h-12 bg-yellow-400/20 rounded-full blur-lg animate-ping"></div>
+              </div>
             </div>
           </div>
 
           {/* Headline */}
           {wish.headline && (
-            <div className={`${config.cardBg} backdrop-blur-sm rounded-2xl p-6 mb-6 shadow-lg`}>
-              <p className={`text-lg sm:text-xl md:text-2xl lg:text-3xl leading-relaxed font-bold text-center ${config.cardText}`}>
+            <div className={`card-glass p-8 mb-8 shadow-glow animate-fade-in-scale`}>
+              <p className={`text-xl sm:text-2xl md:text-3xl lg:text-4xl leading-relaxed font-display font-bold text-center ${config.cardText}`}>
                 {wish.headline}
               </p>
             </div>
           )}
 
           {/* Message */}
-          <div className={`${config.cardBg} backdrop-blur-sm rounded-2xl p-8 mb-8 shadow-lg`}>
-            <p className={`text-base sm:text-lg md:text-xl lg:text-2xl leading-relaxed font-medium ${config.cardText}`}>
+          <div className={`card-glass p-10 mb-10 shadow-glow animate-fade-in-up`}>
+            <p className={`text-lg sm:text-xl md:text-2xl lg:text-3xl leading-relaxed font-medium ${config.cardText}`}>
               {wish.message}
             </p>
           </div>
 
           {/* Custom Image */}
           {wish.image_url && (
-            <div className="mb-8">
-              <img
-                src={wish.image_url}
-                alt="Diwali wish"
-                className="max-w-md mx-auto rounded-2xl shadow-2xl"
-              />
+            <div className="mb-10 animate-fade-in-scale">
+              <div className="relative inline-block">
+                <img
+                  src={wish.image_url}
+                  alt="Diwali wish"
+                  className="max-w-lg mx-auto rounded-3xl shadow-2xl hover-lift transition-all duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-3xl"></div>
+              </div>
             </div>
           )}
 
           {/* Sender Signature */}
           {wish.sender_name && (
-            <div className={`${config.cardBg} backdrop-blur-sm rounded-2xl p-6 mb-8 shadow-lg`}>
-              <div className="flex items-center justify-center space-x-4">
+            <div className={`card-glass p-8 mb-10 shadow-glow animate-fade-in-up`}>
+              <div className="flex items-center justify-center space-x-6">
                 {wish.sender_image_url && !wish.signature && (
-                  <img
-                    src={wish.sender_image_url}
-                    alt="Sender"
-                    className="w-16 h-16 rounded-full object-cover border-2 border-white/30"
-                  />
+                  <div className="relative">
+                    <img
+                      src={wish.sender_image_url}
+                      alt="Sender"
+                      className="w-20 h-20 rounded-full object-cover border-4 border-white/50 shadow-lg hover-lift transition-all duration-300"
+                    />
+                    <div className="absolute inset-0 w-20 h-20 bg-gradient-to-br from-amber-400/20 to-orange-400/20 rounded-full blur-sm"></div>
+                  </div>
                 )}
                 <div className="text-center">
-                  <h3 className={`text-xl font-semibold mb-1 ${config.cardText}`}>
+                  <h3 className={`text-2xl font-display font-bold mb-2 ${config.cardText}`}>
                     {wish.signature || wish.sender_name}
                   </h3>
                   {wish.signature_number && (
-                    <p className={`text-sm opacity-80 flex items-center justify-center ${config.cardText}`}>
-                      <Phone className="w-4 h-4 mr-1" />
+                    <p className={`text-lg opacity-90 flex items-center justify-center ${config.cardText}`}>
+                      <Phone className="w-5 h-5 mr-2" />
                       {wish.signature_number}
                     </p>
                   )}
@@ -467,38 +502,40 @@ export default function WishPage() {
           )}
 
           {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-6 justify-center animate-fade-in-up">
             <button
               onClick={shareOnWhatsApp}
-              className={`${config.buttonColor} text-white font-semibold py-4 px-8 rounded-lg transition-all transform hover:scale-105 flex items-center justify-center`}
+              className={`${config.buttonColor} text-white font-bold py-5 px-10 rounded-2xl transition-all transform hover:scale-105 hover:shadow-glow flex items-center justify-center text-lg`}
             >
-              <MessageCircle className="w-5 h-5 mr-2" />
+              <MessageCircle className="w-6 h-6 mr-3" />
               Share on WhatsApp
             </button>
             
             <button
               onClick={downloadAsImage}
-              className={`${config.buttonColor} text-white font-semibold py-4 px-8 rounded-lg transition-all transform hover:scale-105 flex items-center justify-center`}
+              className={`${config.buttonColor} text-white font-bold py-5 px-10 rounded-2xl transition-all transform hover:scale-105 hover:shadow-glow flex items-center justify-center text-lg`}
             >
-              <Download className="w-5 h-5 mr-2" />
+              <Download className="w-6 h-6 mr-3" />
               Download as Image
             </button>
 
             <button
               onClick={shareImage}
-              className={`${config.buttonColor} text-white font-semibold py-4 px-8 rounded-lg transition-all transform hover:scale-105 flex items-center justify-center`}
+              className={`${config.buttonColor} text-white font-bold py-5 px-10 rounded-2xl transition-all transform hover:scale-105 hover:shadow-glow flex items-center justify-center text-lg`}
             >
-              <Share2 className="w-5 h-5 mr-2" />
+              <Share2 className="w-6 h-6 mr-3" />
               Share Image
             </button>
           </div>
 
           {/* Footer */}
-          <div className="mt-12 text-center">
-            <p className={`text-sm ${config.accentColor} opacity-80`}>
-              Created with ❤️ using Diwali Wish Creator
-            </p>
-            
+          <div className="mt-16 text-center animate-fade-in-up">
+            <div className="card-glass p-6 max-w-md mx-auto">
+              <p className={`text-lg font-medium ${config.cardText} flex items-center justify-center`}>
+                <Heart className="w-5 h-5 mr-2 text-red-500 animate-pulse" />
+                Created with love using Diwali Wish Creator
+              </p>
+            </div>
           </div>
         </div>
       </div>

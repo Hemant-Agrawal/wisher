@@ -272,56 +272,76 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-red-50">
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 relative overflow-hidden">
+      {/* Background Decorations */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-20 h-20 bg-amber-200/30 rounded-full blur-xl animate-float-gentle"></div>
+        <div className="absolute top-40 right-20 w-32 h-32 bg-orange-200/20 rounded-full blur-2xl animate-float-gentle" style={{animationDelay: '1s'}}></div>
+        <div className="absolute bottom-20 left-1/4 w-24 h-24 bg-yellow-200/25 rounded-full blur-xl animate-float-gentle" style={{animationDelay: '2s'}}></div>
+        <div className="absolute bottom-40 right-1/3 w-28 h-28 bg-amber-300/20 rounded-full blur-2xl animate-float-gentle" style={{animationDelay: '0.5s'}}></div>
+      </div>
+
       {/* Header */}
-      <div className="text-center py-8">
-        <div className="flex justify-center items-center mb-4">
-          <Sparkles className="w-8 h-8 text-yellow-500 mr-2" />
-          <h1 className="text-4xl font-bold text-gray-800">Diwali Wish Creator</h1>
-          <Sparkles className="w-8 h-8 text-yellow-500 ml-2" />
+      <div className="relative z-10 text-center py-12 px-4">
+        <div className="animate-fade-in-up">
+          <div className="flex justify-center items-center mb-6">
+            <div className="relative">
+              <Sparkles className="w-10 h-10 text-amber-500 animate-pulse" />
+              <div className="absolute inset-0 w-10 h-10 bg-amber-400/20 rounded-full animate-ping"></div>
+            </div>
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-display font-bold text-gradient mx-4">
+              Diwali Wish Creator
+            </h1>
+            <div className="relative">
+              <Sparkles className="w-10 h-10 text-amber-500 animate-pulse" />
+              <div className="absolute inset-0 w-10 h-10 bg-amber-400/20 rounded-full animate-ping" style={{animationDelay: '0.5s'}}></div>
+            </div>
+          </div>
+          <p className="text-xl md:text-2xl text-gray-700 max-w-4xl mx-auto leading-relaxed font-medium">
+            Create stunning, personalized Diwali wishes that light up hearts ✨<br />
+            <span className="text-amber-600 font-semibold">Choose from beautiful themes and share the joy of Diwali</span>
+          </p>
         </div>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Create a personalized Diwali wish page that you can share with your loved ones. 
-          Choose a beautiful theme and add your own message!
-        </p>
       </div>
 
       {/* Multi-Step Form */}
-      <div className="max-w-6xl mx-auto px-4 pb-8">
-        <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6">
+      <div className="max-w-7xl mx-auto px-4 pb-12 relative z-10">
+        <div className="card-glass p-6 sm:p-8 lg:p-10 animate-fade-in-scale">
           {/* Progress Indicator */}
-          <div className="mb-8">
-            <div className="flex items-center justify-center space-x-4">
+          <div className="mb-10">
+            <div className="flex items-center justify-center space-x-6">
               {[1, 2].map((step) => (
                 <div key={step} className="flex items-center">
                   <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
+                    className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold transition-all duration-500 ${
                       currentStep >= step
-                        ? 'bg-yellow-500 text-white'
-                        : 'bg-gray-200 text-gray-600'
+                        ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-glow animate-pulse-glow'
+                        : 'bg-gray-200 text-gray-500'
                     }`}
                   >
                     {step}
                   </div>
                   {step < 2 && (
                     <div
-                      className={`w-16 h-1 mx-2 ${
-                        currentStep > step ? 'bg-yellow-500' : 'bg-gray-200'
+                      className={`w-20 h-2 mx-4 rounded-full transition-all duration-500 ${
+                        currentStep > step 
+                          ? 'bg-gradient-to-r from-amber-500 to-orange-500' 
+                          : 'bg-gray-200'
                       }`}
                     />
                   )}
                 </div>
               ))}
             </div>
-            <div className="flex justify-center mt-4">
+            <div className="flex justify-center mt-6">
               <div className="text-center">
-                <h3 className="text-lg font-semibold text-gray-800">
-                  {currentStep === 1 && 'Choose Your Message'}
-                  {currentStep === 2 && 'Customize Your Wish'}
+                <h3 className="text-2xl font-bold text-gray-800 mb-2">
+                  {currentStep === 1 && '✨ Choose Your Message'}
+                  {currentStep === 2 && '🎨 Customize Your Wish'}
                 </h3>
-                <p className="text-sm text-gray-600 mt-1">
-                  {currentStep === 1 && 'Select a Diwali message or write your own'}
-                  {currentStep === 2 && 'Pick a theme and add your details'}
+                <p className="text-lg text-gray-600">
+                  {currentStep === 1 && 'Select a beautiful Diwali message or create your own'}
+                  {currentStep === 2 && 'Pick a stunning theme and add your personal details'}
                 </p>
               </div>
             </div>
@@ -330,64 +350,67 @@ export default function Home() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Step 1: Message Selection */}
             {currentStep === 1 && (
-              <div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
-                  {messages.map((message) => (
+              <div className="animate-fade-in-up">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {messages.map((message, index) => (
                     <div
                       key={message.id}
-                      className={`relative cursor-pointer rounded-xl p-4 border-2 transition-all transform hover:scale-105 ${
+                      className={`relative cursor-pointer card hover-lift transition-all duration-300 ${
                         formData.selectedMessage === message.id
-                          ? 'border-yellow-500 ring-2 ring-yellow-200 bg-yellow-50'
-                          : 'border-gray-200 hover:border-gray-300 bg-white hover:shadow-md'
+                          ? 'ring-4 ring-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 shadow-glow'
+                          : 'hover:shadow-xl'
                       }`}
                       onClick={() => setFormData(prev => ({ ...prev, selectedMessage: message.id }))}
+                      style={{ animationDelay: `${index * 0.1}s` }}
                     >
-                      <div className="text-center">
-                        <div className="w-12 h-12 mx-auto mb-3 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
-                          <Sparkles className="w-6 h-6 text-white" />
+                      <div className="p-6 text-center">
+                        <div className="relative mb-4">
+                          <div className="w-16 h-16 mx-auto bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg">
+                            <Sparkles className="w-8 h-8 text-white animate-pulse" />
+                          </div>
+                          {formData.selectedMessage === message.id && (
+                            <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full flex items-center justify-center shadow-lg animate-pulse-glow">
+                              <span className="text-white text-sm font-bold">✓</span>
+                            </div>
+                          )}
                         </div>
-                        <h3 className="font-semibold text-gray-800 mb-2">{message.title}</h3>
+                        <h3 className="text-lg font-bold text-gray-800 mb-3">{message.title}</h3>
                         <p className="text-sm text-gray-600 line-clamp-3 leading-relaxed">{message.message}</p>
                       </div>
-                      {formData.selectedMessage === message.id && (
-                        <div className="absolute top-2 right-2">
-                          <div className="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center">
-                            <span className="text-white text-sm">✓</span>
-                          </div>
-                        </div>
-                      )}
                     </div>
                   ))}
                 </div>
 
                 {/* Custom Message Field - Only show if custom message is selected */}
                 {formData.selectedMessage === 'custom' && (
-                  <div className="mt-6">
-                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
-                      Write Your Custom Message *
-                    </label>
-                    <textarea
-                      id="message"
-                      name="message"
-                      value={formData.message}
-                      onChange={handleInputChange}
-                      required
-                      rows={4}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all resize-none"
-                      placeholder="Write your own personalized Diwali message..."
-                    />
+                  <div className="mt-8 animate-slide-in-right">
+                    <div className="card p-6">
+                      <label htmlFor="message" className="block text-lg font-semibold text-gray-800 mb-4">
+                        ✍️ Write Your Custom Message *
+                      </label>
+                      <textarea
+                        id="message"
+                        name="message"
+                        value={formData.message}
+                        onChange={handleInputChange}
+                        required
+                        rows={5}
+                        className="form-textarea"
+                        placeholder="Write your own personalized Diwali message..."
+                      />
+                    </div>
                   </div>
                 )}
 
-                <div className="flex justify-end mt-6">
+                <div className="flex justify-end mt-8">
                   <button
                     type="button"
                     onClick={nextStep}
                     disabled={!formData.selectedMessage}
-                    className="bg-yellow-500 text-white font-semibold py-3 px-6 rounded-lg hover:bg-yellow-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+                    className="btn-primary text-lg px-8 py-4 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center"
                   >
                     Next Step
-                    <span className="ml-2">→</span>
+                    <span className="ml-3 text-xl">→</span>
                   </button>
                 </div>
               </div>
@@ -395,83 +418,89 @@ export default function Home() {
 
             {/* Step 2: Theme Selection & Details */}
             {currentStep === 2 && (
-                <div className="space-y-4 sm:space-y-6">
+                <div className="space-y-8 animate-fade-in-up">
                 {/* Theme Selection */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-4">
-                    Choose Your Theme *
+                  <label className="block text-2xl font-bold text-gray-800 mb-6 text-center">
+                    🎨 Choose Your Theme *
                   </label>
-                  <div className="flex flex-wrap gap-3 sm:gap-4 justify-center">
-                    {themes.map((theme) => (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
+                    {themes.map((theme, index) => (
                       <div
                         key={theme.id}
                         className="relative cursor-pointer group"
                         onClick={() => setFormData(prev => ({ ...prev, selectedTheme: theme.id }))}
+                        style={{ animationDelay: `${index * 0.1}s` }}
                       >
-                        <div
-                          className={`w-16 h-16 rounded-full ${theme.color} ${theme.hoverColor} transition-all transform group-hover:scale-110 border-4 ${
-                            formData.selectedTheme === theme.id
-                              ? 'border-yellow-500 ring-4 ring-yellow-200'
-                              : 'border-white shadow-lg'
-                          }`}
-                        ></div>
-                        <p className="text-xs text-center mt-2 font-medium text-gray-700">
-                          {theme.name}
-                        </p>
-                        {formData.selectedTheme === theme.id && (
-                          <div className="absolute -top-1 -right-1">
-                            <div className="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center">
-                              <span className="text-white text-xs">✓</span>
+                        <div className="card hover-lift p-4 text-center">
+                          <div
+                            className={`w-20 h-20 mx-auto rounded-2xl ${theme.color} ${theme.hoverColor} transition-all transform group-hover:scale-110 border-4 ${
+                              formData.selectedTheme === theme.id
+                                ? 'border-amber-500 ring-4 ring-amber-200 shadow-glow'
+                                : 'border-white shadow-lg'
+                            }`}
+                          ></div>
+                          <p className="text-sm font-semibold text-gray-800 mt-3">
+                            {theme.name}
+                          </p>
+                          {formData.selectedTheme === theme.id && (
+                            <div className="absolute -top-2 -right-2">
+                              <div className="w-8 h-8 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full flex items-center justify-center shadow-lg animate-pulse-glow">
+                                <span className="text-white text-sm font-bold">✓</span>
+                              </div>
                             </div>
-                          </div>
-                        )}
+                          )}
+                        </div>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                {/* Your Name Field */}
-                <div>
-                  <label htmlFor="senderName" className="block text-sm font-medium text-gray-700 mb-2">
-                    Your Name *
-                  </label>
-                  <input
-                    type="text"
-                    id="senderName"
-                    name="senderName"
-                    value={formData.senderName}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
-                    placeholder="Enter your name (will appear in headline)"
-                  />
-                </div>
+                {/* Form Fields */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Your Name Field */}
+                  <div className="animate-slide-in-right">
+                    <label htmlFor="senderName" className="block text-lg font-semibold text-gray-800 mb-3">
+                      👤 Your Name *
+                    </label>
+                    <input
+                      type="text"
+                      id="senderName"
+                      name="senderName"
+                      value={formData.senderName}
+                      onChange={handleInputChange}
+                      required
+                      className="form-input"
+                      placeholder="Enter your name (will appear in headline)"
+                    />
+                  </div>
 
-                {/* Receiver Name Field */}
-                <div>
-                  <label htmlFor="receiverName" className="block text-sm font-medium text-gray-700 mb-2">
-                    Receiver's Name (Optional)
-                  </label>
-                  <input
-                    type="text"
-                    id="receiverName"
-                    name="receiverName"
-                    value={formData.receiverName}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
-                    placeholder="Enter receiver's name (optional)"
-                  />
+                  {/* Receiver Name Field */}
+                  <div className="animate-slide-in-right" style={{animationDelay: '0.1s'}}>
+                    <label htmlFor="receiverName" className="block text-lg font-semibold text-gray-800 mb-3">
+                      🎯 Receiver's Name (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      id="receiverName"
+                      name="receiverName"
+                      value={formData.receiverName}
+                      onChange={handleInputChange}
+                      className="form-input"
+                      placeholder="Enter receiver's name (optional)"
+                    />
+                  </div>
                 </div>
 
                 {/* Signature Toggle */}
-                <div className="bg-blue-50 rounded-lg p-4">
+                <div className="card-glass p-6 animate-fade-in-up">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-800 flex items-center">
-                        <User className="w-5 h-5 mr-2" />
+                      <h3 className="text-xl font-bold text-gray-800 flex items-center mb-2">
+                        <User className="w-6 h-6 mr-3 text-amber-600" />
                         Add Signature
                       </h3>
-                      <p className="text-sm text-gray-600 mt-1">
+                      <p className="text-gray-600">
                         Add a separate signature (can be company name)
                       </p>
                     </div>
@@ -483,23 +512,23 @@ export default function Home() {
                         onChange={handleInputChange}
                         className="sr-only peer"
                       />
-                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-yellow-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-500"></div>
+                      <div className="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-amber-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-amber-500 peer-checked:to-orange-500"></div>
                     </label>
                   </div>
                 </div>
 
                 {/* Signature Fields - Only show when toggle is enabled */}
                 {formData.showSignature && (
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
-                      <User className="w-5 h-5 mr-2" />
+                  <div className="card p-6 animate-fade-in-up">
+                    <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                      <User className="w-6 h-6 mr-3 text-amber-600" />
                       Signature Details
                     </h3>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                       <div>
-                        <label htmlFor="signatureName" className="block text-sm font-medium text-gray-700 mb-2">
-                          Signature Name (Optional)
+                        <label htmlFor="signatureName" className="block text-lg font-semibold text-gray-800 mb-3">
+                          📝 Signature Name (Optional)
                         </label>
                         <input
                           type="text"
@@ -507,14 +536,14 @@ export default function Home() {
                           name="signatureName"
                           value={formData.signatureName}
                           onChange={handleInputChange}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
+                          className="form-input"
                           placeholder="Enter signature name (can be company name)"
                         />
                       </div>
                       
                       <div>
-                        <label htmlFor="signatureNumber" className="block text-sm font-medium text-gray-700 mb-2">
-                          Signature Number (Optional)
+                        <label htmlFor="signatureNumber" className="block text-lg font-semibold text-gray-800 mb-3">
+                          📞 Signature Number (Optional)
                         </label>
                         <input
                           type="tel"
@@ -522,7 +551,7 @@ export default function Home() {
                           name="signatureNumber"
                           value={formData.signatureNumber}
                           onChange={handleInputChange}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
+                          className="form-input"
                           placeholder="Enter your phone number"
                         />
                       </div>
@@ -530,10 +559,10 @@ export default function Home() {
 
                     {/* Photo Upload - Only show when signature is enabled */}
                     <div>
-                      <label htmlFor="senderImage" className="block text-sm font-medium text-gray-700 mb-2">
-                        Your Photo (Optional)
+                      <label htmlFor="senderImage" className="block text-lg font-semibold text-gray-800 mb-3">
+                        📸 Your Photo (Optional)
                       </label>
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
+                      <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-amber-400 hover:bg-amber-50 transition-all duration-300 cursor-pointer">
                         <input
                           type="file"
                           id="senderImage"
@@ -543,11 +572,11 @@ export default function Home() {
                           className="hidden"
                         />
                         <label htmlFor="senderImage" className="cursor-pointer">
-                          <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                          <p className="text-gray-600">
+                          <Upload className="w-12 h-12 text-amber-500 mx-auto mb-4" />
+                          <p className="text-lg font-medium text-gray-700">
                             {formData.senderImage ? formData.senderImage.name : 'Click to upload your photo'}
                           </p>
-                          <p className="text-sm text-gray-500 mt-1">
+                          <p className="text-sm text-gray-500 mt-2">
                             PNG, JPG, GIF up to 10MB
                           </p>
                         </label>
@@ -556,28 +585,28 @@ export default function Home() {
                   </div>
                 )}
 
-                <div className="flex justify-between">
+                <div className="flex flex-col sm:flex-row justify-between gap-4 mt-8">
                   <button
                     type="button"
                     onClick={prevStep}
-                    className="bg-gray-500 text-white font-semibold py-3 px-6 rounded-lg hover:bg-gray-600 transition-all flex items-center"
+                    className="btn-secondary text-lg px-8 py-4 flex items-center justify-center"
                   >
-                    <span className="mr-2">←</span>
+                    <span className="mr-3 text-xl">←</span>
                     Previous
                   </button>
                   <button
                     type="submit"
                     disabled={isLoading || !formData.senderName || !formData.selectedTheme}
-                    className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-semibold py-4 px-6 rounded-lg hover:from-yellow-600 hover:to-orange-600 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center"
+                    className="btn-primary text-lg px-8 py-4 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center"
                   >
                     {isLoading ? (
                       <>
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-3"></div>
                         Creating Your Wish...
                       </>
                     ) : (
                       <>
-                        <Heart className="w-5 h-5 mr-2" />
+                        <Heart className="w-6 h-6 mr-3" />
                         Generate My Wish Page
                       </>
                     )}
