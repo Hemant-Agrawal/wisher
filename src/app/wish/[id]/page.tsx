@@ -1,9 +1,9 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { supabase, Wish } from '@/lib/supabase'
-import { Share2, Download, MessageCircle, Sparkles, Star, Flame, User, Phone, Heart } from 'lucide-react'
+import { Share2, Download, MessageCircle, Sparkles, Star, Flame, User, Phone, Heart, Plus } from 'lucide-react'
 import { Fireworks } from 'fireworks-js'
 import html2canvas from 'html2canvas'
 
@@ -108,6 +108,7 @@ const themeConfigs = {
 
 export default function WishPage() {
   const params = useParams()
+  const router = useRouter()
   const [wish, setWish] = useState<Wish | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -332,6 +333,10 @@ export default function WishPage() {
     }
   }
 
+  const createYourOwn = () => {
+    router.push('/')
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -453,7 +458,7 @@ export default function WishPage() {
 
           {/* Custom Image */}
           {wish.image_url && (
-            <div className="mb-10 animate-fade-in-scale">
+            <div className="mb-10 animate-fade-in-scale ">
               <div className="relative inline-block">
                 <img
                   src={wish.image_url}
@@ -516,30 +521,44 @@ export default function WishPage() {
           )}
 
           {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-6 justify-center animate-fade-in-up">
-            <button
-              onClick={shareOnWhatsApp}
-              className={`${config.buttonColor} text-white font-bold py-5 px-10 rounded-2xl transition-all transform hover:scale-105 hover:shadow-glow flex items-center justify-center text-lg`}
-            >
-              <MessageCircle className="w-6 h-6 mr-3" />
-              Share on WhatsApp
-            </button>
-            
-            <button
-              onClick={downloadAsImage}
-              className={`${config.buttonColor} text-white font-bold py-5 px-10 rounded-2xl transition-all transform hover:scale-105 hover:shadow-glow flex items-center justify-center text-lg`}
-            >
-              <Download className="w-6 h-6 mr-3" />
-              Download as Image
-            </button>
+          <div className="flex flex-col gap-6 justify-center animate-fade-in-up">
+            {/* Create Your Own Button */}
+            <div className="flex justify-center">
+              <button
+                onClick={createYourOwn}
+                className="bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold py-4 px-8 rounded-2xl transition-all transform hover:scale-105 hover:shadow-glow flex items-center justify-center text-lg shadow-lg"
+              >
+                <Plus className="w-6 h-6 mr-3" />
+                Create Your Own Wish
+              </button>
+            </div>
 
-            <button
-              onClick={shareImage}
-              className={`${config.buttonColor} text-white font-bold py-5 px-10 rounded-2xl transition-all transform hover:scale-105 hover:shadow-glow flex items-center justify-center text-lg`}
-            >
-              <Share2 className="w-6 h-6 mr-3" />
-              Share Image
-            </button>
+            {/* Icon-only Action Buttons Row */}
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={shareOnWhatsApp}
+                className={`${config.buttonColor} text-white font-bold p-4 rounded-full transition-all transform hover:scale-110 hover:shadow-glow flex items-center justify-center shadow-lg`}
+                title="Share on WhatsApp"
+              >
+                <MessageCircle className="w-6 h-6" />
+              </button>
+              
+              <button
+                onClick={downloadAsImage}
+                className={`${config.buttonColor} text-white font-bold p-4 rounded-full transition-all transform hover:scale-110 hover:shadow-glow flex items-center justify-center shadow-lg`}
+                title="Download as Image"
+              >
+                <Download className="w-6 h-6" />
+              </button>
+
+              <button
+                onClick={shareImage}
+                className={`${config.buttonColor} text-white font-bold p-4 rounded-full transition-all transform hover:scale-110 hover:shadow-glow flex items-center justify-center shadow-lg`}
+                title="Share Image"
+              >
+                <Share2 className="w-6 h-6" />
+              </button>
+            </div>
           </div>
 
           {/* Footer */}
